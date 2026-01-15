@@ -1,9 +1,9 @@
-<nav style="padding: 1rem; background: #eee; display: flex; gap: 10px;">
-  <a routerLink="/">Home</a>
-  <a routerLink="/hunt">Play Game</a>
-  <a routerLink="/leaderboard">Leaderboard</a>
+<nav style="padding: 1rem; background: #333; display: flex; gap: 20px;">
+  <a routerLink="/" style="color: white; cursor: pointer;">Home</a>
+  <a routerLink="/hunt" style="color: white; cursor: pointer;">Play Hunt</a>
+  <a routerLink="/leaderboard" style="color: white; cursor: pointer;">Leaderboard</a>
 </nav>
 
-<hr>
-
-<router-outlet></router-outlet>
+<div style="padding: 20px;">
+  <router-outlet></router-outlet>
+</div>
