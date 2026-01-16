@@ -1,13 +1,11 @@
 import { Component } from '@angular/core';
-import { RouterOutlet, RouterLink } from '@angular/router'; // 1. Import these
+import { RouterOutlet, RouterLink } from '@angular/router'; 
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, RouterLink], // 2. Add them to the imports array
+  imports: [RouterOutlet, RouterLink], // This powers the nav bar links
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
-export class AppComponent {
-  title = 'scavenger-hunt-app';
-}
+export class AppComponent { }

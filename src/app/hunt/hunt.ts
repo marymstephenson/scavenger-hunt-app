@@ -1,81 +1,72 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router'; // 1. Import ActivatedRoute
-import { PlayerService } from '../player'; // Removed '.service' and adjusted the path
+import { ActivatedRoute, RouterModule } from '@angular/router';
+import { Firestore, doc, setDoc, serverTimestamp, collection, getDocs } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-hunt',
   standalone: true,
-  imports: [CommonModule],
-  template: `
-    <div style="max-width: 500px; margin: auto; padding: 20px; font-family: sans-serif;">
-      <h2>Hello, {{ playerService.getName() }}!</h2>
-      <p>Items Found: {{ getCount() }} / {{ items.length }}</p>
-
-      <div style="background: #f0f0f0; padding: 15px; border-radius: 10px; margin-bottom: 20px; border: 2px dashed #999;">
-        <p style="margin-top: 0; font-weight: bold; color: #666;">Simulate NFC Tag Scan:</p>
-        <button (click)="markItemAsFound('tag1')" style="margin-right: 5px; cursor: pointer;">Scan Sunflower</button>
-        <button (click)="markItemAsFound('tag2')" style="margin-right: 5px; cursor: pointer;">Scan Mural</button>
-        <button (click)="markItemAsFound('tag3')" style="cursor: pointer;">Scan Tree</button>
-      </div>
-
-      <div *ngIf="getCount() === items.length" 
-          style="background: #d4edda; color: #155724; padding: 20px; border-radius: 10px; text-align: center; margin-bottom: 20px; border: 2px solid #c3e6cb;">
-        <h3>🎉 Quest Complete! 🎉</h3>
-        <p>You've found everything! Head to the festival booth to claim your prize.</p>
-      </div>
-
-      <div *ngFor="let item of items" style="margin-bottom: 15px; padding: 10px; border-bottom: 1px solid #eee;">
-        <span [style.text-decoration]="item.found ? 'line-through' : 'none'">
-           {{ item.found ? '✅' : '⬜' }} {{ item.name }}
-        </span>
-      </div>
-    </div>
-  `
+  imports: [CommonModule, RouterModule],
+  templateUrl: './hunt.html',
+  styleUrl: './hunt.scss'
 })
 export class HuntComponent implements OnInit {
-  items = [
-    { id: 'tag1', name: 'Giant Sunflower', found: false },
-    { id: 'tag2', name: 'Main Stage Mural', found: false },
-    { id: 'tag3', name: 'Old Oak Tree', found: false }
-  ];
-  lastScanned = '';
+  private route = inject(ActivatedRoute);
+  private firestore = inject(Firestore);
+  private cdr = inject(ChangeDetectorRef); // Forces the screen to update
 
-   constructor(
-     private route: ActivatedRoute, 
-     public playerService: PlayerService
-   ) {}
+  allStations = ['StageDoor', 'MainLobby', 'WorkshopA', 'TechnicalBooth', 'GreenRoom'];
+  unlockedBadges: string[] = [];
+  studentName: string | null = '';
 
-  ngOnInit() {
-    // 1. Load saved progress from LocalStorage
-    const savedIds = this.playerService.loadProgress();
-  
-    // 2. Mark those items as found in our current list
-    this.items.forEach(item => {
-      if (savedIds.includes(item.id)) {
-        item.found = true;
+  async ngOnInit() {
+    this.route.queryParams.subscribe(async (params) => {
+      const posterId = params['id'];
+      this.studentName = localStorage.getItem('studentName');
+      const troupe = localStorage.getItem('troupeNum');
+
+      if (this.studentName && troupe) {
+        // 1. If there's an ID, save it first
+        if (posterId) {
+          await this.saveBadge(this.studentName, troupe, posterId);
+        }
+        
+        // 2. Load the badges and FORCE the screen to "re-draw"
+        await this.loadMyBadges();
+        this.cdr.detectChanges(); 
       }
     });
-
-    // 3. Keep listening for new NFC tags via URL
-    this.route.queryParams.subscribe(params => {
-      const scannedId = params['id'];
-      if (scannedId) this.markItemAsFound(scannedId);
-    });
   }
 
-  markItemAsFound(id: string) {
-    const item = this.items.find(i => i.id === id);
-    if (item && !item.found) {
-      item.found = true;
+  async saveBadge(name: string, troupe: string, posterId: string) {
+    const studentId = `${name}-${troupe}`.replace(/\s+/g, '-').toLowerCase();
+    const badgeRef = doc(this.firestore, `students/${studentId}/badges/${posterId}`);
     
-      // 4. Save the new state so it survives a refresh
-      const currentlyFoundIds = this.items
-        .filter(i => i.found)
-        .map(i => i.id);
-      this.playerService.saveProgress(currentlyFoundIds);
+    // This is what you see in your screenshot!
+    await setDoc(badgeRef, { found: true, time: serverTimestamp() }, { merge: true });
+
+    const studentRef = doc(this.firestore, `students/${studentId}`);
+    await setDoc(studentRef, { 
+      name, 
+      troupe, 
+      badgeCount: this.unlockedBadges.length + 1,
+      lastActive: serverTimestamp() 
+    }, { merge: true });
+  }
+
+  async loadMyBadges() {
+    const name = localStorage.getItem('studentName');
+    const troupe = localStorage.getItem('troupeNum');
+    
+    if (name && troupe) {
+      const studentId = `${name}-${troupe}`.replace(/\s+/g, '-').toLowerCase();
+      const colRef = collection(this.firestore, `students/${studentId}/badges`);
+      const snap = await getDocs(colRef);
+      
+      // We map the document names (StageDoor) to our list
+      this.unlockedBadges = snap.docs.map(d => d.id);
+      console.log("SUCCESS: Found these stars in DB:", this.unlockedBadges);
+      this.cdr.detectChanges();
     }
   }
-
-  getCount() { return this.items.filter(i => i.found).length; }
 }

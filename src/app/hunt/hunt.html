@@ -1,1 +1,21 @@
-<p>hunt works!</p>
+<div style="max-width: 500px; margin: 0 auto; text-align: center; padding: 20px; font-family: sans-serif;">
+  <h1>🎭 Hunt Progress</h1>
+  <p>Logged in as: <strong>{{ studentName }}</strong></p>
+
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px;">
+    <div *ngFor="let station of allStations" 
+         style="padding: 20px; border: 2px solid #eee; border-radius: 15px; background: #f9f9f9;">
+      
+      <div *ngIf="unlockedBadges.includes(station); else locked">
+        <div style="font-size: 3rem;">⭐</div>
+        <p style="color: #2e7d32; font-weight: bold; margin: 5px 0;">{{ station }}</p>
+      </div>
+
+      <ng-template #locked>
+        <div style="font-size: 3rem; opacity: 0.2; filter: grayscale(1);">❓</div>
+        <p style="color: #999; margin: 5px 0;">Locked</p>
+      </ng-template>
+
+    </div>
+  </div>
+</div>

@@ -1,1 +1,16 @@
-<p>leaderboard works!</p>
+<div style="background: #1a1a1a; color: white; min-height: 100vh; padding: 40px; font-family: sans-serif;">
+  <div style="display: flex; justify-content: space-between; align-items: center;">
+    <h1>🏆 STO Hunt Leaderboard</h1>
+    <button (click)="toggleRefresh()" style="padding: 10px 20px; cursor: pointer;">
+      {{ isAutoRefresh ? '⏸ Pause Refresh' : '▶ Resume Refresh' }}
+    </button>
+  </div>
+
+  <hr style="border: 1px solid #444; margin: 20px 0;">
+
+  <div *ngFor="let student of students; let i = index" 
+       style="display: flex; justify-content: space-between; font-size: 1.5rem; padding: 15px; border-bottom: 1px solid #333;">
+    <span>{{ i + 1 }}. {{ student.name }} (Troupe {{ student.troupe }})</span>
+    <span style="color: #ffd700;">{{ student.badgeCount || 0 }} / 5 Badges</span>
+  </div>
+</div>
