@@ -1,39 +1,33 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms'; // 1. Import FormsModule for inputs
-import { PlayerService } from '../player'; // Removed '.service' and adjusted the path
-import { Router } from '@angular/router';
+import { FormsModule } from '@angular/forms'; // Required for [(ngModel)]
+import { Router, RouterModule } from '@angular/router'; // Required for navigation
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, FormsModule],
-  template: `
-    <div style="max-width: 400px; margin: auto; text-align: center;">
-      <h1>Festival Hunt</h1>
-      <p>Enter your nickname to start the quest!</p>
-      
-      <input [(ngModel)]="userName" 
-             placeholder="Username..." 
-             style="padding: 10px; width: 80%; border-radius: 5px; border: 1px solid #ccc;">
-      
-      <br><br>
-      
-      <button (click)="startHunt()" 
-              [disabled]="!userName"
-              style="padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">
-        Start Hunting!
-      </button>
-    </div>
-  `
+  // These must be standalone or NgModules to clear your error
+  imports: [CommonModule, FormsModule, RouterModule], 
+  templateUrl: './home.html'
 })
 export class HomeComponent {
-  userName: string = '';
+  private router = inject(Router);
 
-  constructor(private playerService: PlayerService, private router: Router) {}
+  // Data fields matching your Western design
+  studentName: string = '';
+  troupeNum: string = '';
+  favNum: string = '';
 
-  startHunt() {
-    this.playerService.setName(this.userName);
-    this.router.navigate(['/hunt']); // Send them straight to the game!
+  login() {
+    if (this.studentName && this.troupeNum) {
+      // Save to local storage so the Hunt page knows who is playing
+      localStorage.setItem('studentName', this.studentName);
+      localStorage.setItem('troupeNum', this.troupeNum);
+      
+      // Navigate to the 9-star grid
+      this.router.navigate(['/hunt']);
+    } else {
+      alert("Hold your horses! We need your name and troupe number first.");
+    }
   }
 }

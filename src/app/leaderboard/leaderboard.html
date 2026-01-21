@@ -1,16 +1,41 @@
-<div style="background: #1a1a1a; color: white; min-height: 100vh; padding: 40px; font-family: sans-serif;">
-  <div style="display: flex; justify-content: space-between; align-items: center;">
-    <h1>🏆 STO Hunt Leaderboard</h1>
-    <button (click)="toggleRefresh()" style="padding: 10px 20px; cursor: pointer;">
-      {{ isAutoRefresh ? '⏸ Pause Refresh' : '▶ Resume Refresh' }}
+<div style="min-height: calc(100vh - 70px); background: #f4e4bc; padding: 20px; font-family: serif;">
+  
+  <div style="text-align: center; margin-bottom: 20px;">
+    <button (click)="fetchLeaderboard()" [disabled]="isRefreshing"
+            style="background: #002d72; color: white; padding: 12px 30px; border-radius: 50px; font-size: 1.1rem; font-weight: bold; border: none; cursor: pointer; text-transform: uppercase;">
+      {{ isRefreshing ? 'Gathering Cowboys...' : 'Refresh Standings' }}
     </button>
   </div>
 
-  <hr style="border: 1px solid #444; margin: 20px 0;">
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; max-width: 1200px; margin: 0 auto;">
+    
+    <div style="background: #b9d9eb; padding: 25px; border-radius: 35px; border: 8px solid #002d72; min-height: 500px;">
+      <h2 style="color: #002d72; text-align: center; font-size: 1.8rem; margin-top: 0; text-transform: uppercase;">Current Cowboys</h2>
+      <hr style="border: 2px solid #002d72; margin-bottom: 20px;">
+      
+      <div *ngFor="let student of currentCowboys" 
+           style="display: flex; justify-content: space-between; font-size: 1.3rem; color: #002d72; font-weight: bold; padding: 10px 0; border-bottom: 2px dashed rgba(0,45,114,0.2);">
+        <span>{{ student.name }}-{{ student.troupe }}</span>
+        <span>{{ student.badgeCount || 0 }}/9</span>
+      </div>
+    </div>
 
-  <div *ngFor="let student of students; let i = index" 
-       style="display: flex; justify-content: space-between; font-size: 1.5rem; padding: 15px; border-bottom: 1px solid #333;">
-    <span>{{ i + 1 }}. {{ student.name }} (Troupe {{ student.troupe }})</span>
-    <span style="color: #ffd700;">{{ student.badgeCount || 0 }} / 5 Badges</span>
+    <div style="background: #b9d9eb; padding: 25px; border-radius: 35px; border: 8px solid #002d72; min-height: 500px;">
+      <h2 style="color: #002d72; text-align: center; font-size: 1.8rem; margin-top: 0; text-transform: uppercase;">Past Prospectors</h2>
+      <hr style="border: 2px solid #002d72; margin-bottom: 20px;">
+      
+      <div *ngFor="let student of pastProspectors" style="text-align: center; color: #002d72; margin-bottom: 15px;">
+        <div style="font-size: 1.4rem; font-weight: bold;">{{ student.name }}-{{ student.troupe }}</div>
+        <div style="font-size: 0.8rem; font-style: italic; opacity: 0.7;">
+          Finished at: {{ student.lastActive?.toDate() | date:'shortTime' }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top: 50px; padding: 20px; border: 2px dashed #002d72; border-radius: 10px; text-align: center; opacity: 0.5;">
+    <h3 style="color: #002d72; margin-top: 0;">🛠 Admin Testing Tools</h3>
+    <button (click)="seedTestData()" style="margin-right: 10px; padding: 10px; cursor: pointer;">🌵 Add 5 Test Cowboys</button>
+    <button (click)="clearTestData()" style="padding: 10px; cursor: pointer; color: red;">🧨 Clear All Test Data</button>
   </div>
 </div>

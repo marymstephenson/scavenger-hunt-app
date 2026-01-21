@@ -1,9 +1,12 @@
-<nav style="padding: 1rem; background: #333; display: flex; gap: 20px;">
-  <a routerLink="/" style="color: white; cursor: pointer;">Home</a>
-  <a routerLink="/hunt" style="color: white; cursor: pointer;">Play Hunt</a>
-  <a routerLink="/leaderboard" style="color: white; cursor: pointer;">Leaderboard</a>
+<nav style="background: #002d72; padding: 15px; display: flex; align-items: center; justify-content: space-between; color: white; border-bottom: 4px solid #ccaa2b; position: sticky; top: 0; z-index: 1000; font-family: serif;">
+  
+  <a routerLink="/" style="text-decoration: none; font-size: 1.5rem; cursor: pointer;">⭐</a>
+  
+  <a routerLink="/hunt" style="text-decoration: none; color: white; cursor: pointer;">
+    <h2 style="margin: 0; text-transform: uppercase; letter-spacing: 2px; font-size: 1.2rem;">Scavenger Hunt</h2>
+  </a>
+  
+  <a routerLink="/leaderboard" style="text-decoration: none; font-size: 1.5rem; cursor: pointer;">🤠</a>
 </nav>
 
-<div style="padding: 20px;">
-  <router-outlet></router-outlet>
-</div>
+<router-outlet></router-outlet>

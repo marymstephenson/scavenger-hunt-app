@@ -1,21 +1,33 @@
-<div style="max-width: 500px; margin: 0 auto; text-align: center; padding: 20px; font-family: sans-serif;">
-  <h1>🎭 Hunt Progress</h1>
-  <p>Logged in as: <strong>{{ studentName }}</strong></p>
+<div style="min-height: calc(100vh - 70px); background: #f4e4bc; padding: 20px; text-align: center; font-family: serif;">
+  
+  <div style="background: #b9d9eb; padding: 15px; border-radius: 20px; border: 4px solid #002d72; display: inline-block; margin-bottom: 20px;">
+    <p style="margin: 0; color: #002d72; font-weight: bold; font-size: 1.2rem;">NAME: {{ studentName }}</p>
 
-  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px;">
-    <div *ngFor="let station of allStations" 
-         style="padding: 20px; border: 2px solid #eee; border-radius: 15px; background: #f9f9f9;">
-      
-      <div *ngIf="unlockedBadges.includes(station); else locked">
-        <div style="font-size: 3rem;">⭐</div>
-        <p style="color: #2e7d32; font-weight: bold; margin: 5px 0;">{{ station }}</p>
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
+      <div *ngFor="let station of allStations" style="text-align: center;">
+        
+        <div *ngIf="unlockedBadges.includes(station.id); else locked" style="color: #ffcc00; font-size: 3.5rem;">
+          ★
+        </div>
+
+        <ng-template #locked>
+          <div style="width: 60px; height: 60px; background: rgba(0,0,0,0.05); border: 2px dashed #002d72; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 1.5rem; color: #002d72;">?</div>
+        </ng-template>
+
+        <p style="font-size: 0.6rem; color: #002d72; font-weight: bold; text-transform: uppercase; margin-top: 5px;">{{ station.label }}</p>
       </div>
+    </div>
+  </div>
 
-      <ng-template #locked>
-        <div style="font-size: 3rem; opacity: 0.2; filter: grayscale(1);">❓</div>
-        <p style="color: #999; margin: 5px 0;">Locked</p>
-      </ng-template>
-
+  <div *ngIf="activeStation" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; padding: 20px; z-index: 999;">
+    <div style="background: #b9d9eb; padding: 30px; border-radius: 25px; text-align: center; border: 8px solid #002d72; max-width: 400px;">
+      <h1 style="color: #002d72; margin-top: 0;">NEW MISSION!</h1>
+      <p style="font-size: 1.3rem; font-weight: bold; color: #333;">{{ activeStation.task }}</p>
+      
+      <button (click)="completeTask(activeStation.id)" 
+              style="background: #002d72; color: white; border: none; padding: 18px 35px; border-radius: 40px; font-size: 1.1rem; font-weight: bold; margin-top: 20px; cursor: pointer;">
+        I COMPLETED THIS!
+      </button>
     </div>
   </div>
 </div>
