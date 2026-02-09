@@ -1,12 +1,24 @@
-<nav style="background: #002d72; padding: 15px; display: flex; align-items: center; justify-content: space-between; color: white; border-bottom: 4px solid #ccaa2b; position: sticky; top: 0; z-index: 1000; font-family: serif;">
+<nav style="background: #002d72; padding: 10px 15px; display: flex; align-items: center; justify-content: space-between; color: white; border-bottom: 4px solid #ccaa2b; position: sticky; top: 0; z-index: 1000; font-family: serif;">
   
-  <a routerLink="/" style="text-decoration: none; font-size: 1.5rem; cursor: pointer;">⭐</a>
+  <a routerLink="/" style="text-decoration: none; font-size: 1.5rem;">⭐</a>
   
-  <a routerLink="/hunt" style="text-decoration: none; color: white; cursor: pointer;">
-    <h2 style="margin: 0; text-transform: uppercase; letter-spacing: 2px; font-size: 1.2rem;">Scavenger Hunt</h2>
-  </a>
+  <div style="display: flex; background: rgba(0,0,0,0.2); padding: 4px; border-radius: 50px;">
+    <a routerLink="/hunt" 
+       routerLinkActive="active-pill"
+       style="text-decoration: none; color: white; padding: 8px 18px; border-radius: 20px; font-weight: bold; font-family: serif; font-size: 0.9rem;">
+      Scavenger Hunt
+    </a>
+
+    <a routerLink="/bingo" 
+       routerLinkActive="active-pill"
+       style="text-decoration: none; color: white; padding: 8px 18px; border-radius: 20px; font-weight: bold; font-family: serif; font-size: 0.9rem;">
+      College Table Bingo
+    </a>
+  </div>
   
-  <a routerLink="/leaderboard" style="text-decoration: none; font-size: 1.5rem; cursor: pointer;">🤠</a>
+  <a routerLink="/leaderboard" style="text-decoration: none; font-size: 1.5rem;">🤠</a>
 </nav>
 
-<router-outlet></router-outlet>
+<div style="background-color: #f5e6be; min-height: 100vh; padding-top: 20px;">
+  <router-outlet></router-outlet>
+</div>

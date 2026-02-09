@@ -1,11 +1,13 @@
 import { Routes } from '@angular/router';
-import { HomeComponent } from './home/home'; // Ensure this path is correct
 import { HuntComponent } from './hunt/hunt';
+import { BingoComponent } from './bingo/bingo';
 import { LeaderboardComponent } from './leaderboard/leaderboard';
+import { HomeComponent } from './home/home'; // Assuming this is your login/landing page
 
 export const routes: Routes = [
-  { path: '', component: HomeComponent },             // Home page is now the default
-  { path: 'hunt', component: HuntComponent },         // Scavenger Hunt grid
-  { path: 'leaderboard', component: LeaderboardComponent }, 
-  { path: '**', redirectTo: '' }                      // Redirect any errors to Home
+  { path: '', component: HomeComponent }, // Make the home/login page the "front door"
+  { path: 'hunt', component: HuntComponent },
+  { path: 'bingo', component: BingoComponent },
+  { path: 'leaderboard', component: LeaderboardComponent },
+  { path: '**', redirectTo: '' } // If they type a weird URL, send them home
 ];

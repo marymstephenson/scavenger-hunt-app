@@ -1,0 +1,23 @@
+<div class="bingo-page-container">
+  <div class="bingo-card">
+    <h1 class="bingo-title">College Table Bingo</h1>
+    <p class="progress-label">Progress: {{ visitedCount() }} / {{ totalNeeded }} Tables</p>
+
+    <div class="bingo-grid">
+      @for (square of squares(); track square.id) {
+        <div 
+          class="square"
+          [class.done]="square.id === 12 ? isFreeSpaceUnlocked() : square.completed"
+          [class.free]="square.id === 12"
+          (click)="toggleSquare(square.id)">
+          
+          <span class="square-text">{{ square.text }}</span>
+          
+          @if ((square.id === 12 && isFreeSpaceUnlocked()) || square.completed) {
+            <div class="star-icon">⭐</div>
+          }
+        </div>
+      }
+    </div>
+  </div>
+</div>
