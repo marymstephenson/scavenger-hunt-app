@@ -1,6 +1,5 @@
-// src/app/app.ts
-import { Component, signal, effect } from '@angular/core'; // Added 'effect' here
-import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import { Component, signal, effect, inject } from '@angular/core';
+import { RouterOutlet, RouterLink, RouterLinkActive, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -10,17 +9,42 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
   styleUrl: './app.scss',
 })
 export class AppComponent {
-  globalProgress = signal<number>(this.loadProgress());
+  private route = inject(ActivatedRoute);
+  
+  // The 'source of truth' for visited tables
+  visitedTableNames = signal<string[]>(this.loadVisitedTables());
+  // This signal calculates the count based on the array length
+  globalProgress = signal<number>(this.visitedTableNames().length);
 
   constructor() {
-    // This 'effect' will now work perfectly
+    // Listen for the ?table= URL parameter
+    this.route.queryParams.subscribe(params => {
+      const tableName = params['table'];
+      if (tableName) {
+        this.registerTableVisit(tableName);
+      }
+    });
+
+    // Save to phone memory whenever the list changes
     effect(() => {
-      localStorage.setItem('scavengerProgress', this.globalProgress().toString());
+      localStorage.setItem('visitedTables', JSON.stringify(this.visitedTableNames()));
     });
   }
 
-  private loadProgress(): number {
-    const saved = localStorage.getItem('scavengerProgress');
-    return saved ? parseInt(saved, 10) : 0;
+  registerTableVisit(name: string) {
+    const currentList = this.visitedTableNames();
+    
+    // Only add the table if it hasn't been visited yet (prevents double-counting)
+    if (!currentList.includes(name)) {
+      this.visitedTableNames.update(list => [...list, name]);
+      // Update the progress count
+      this.globalProgress.set(this.visitedTableNames().length);
+      console.log('New table visited:', name, 'Total:', this.globalProgress());
+    }
+  }
+
+  private loadVisitedTables(): string[] {
+    const saved = localStorage.getItem('visitedTables');
+    return saved ? JSON.parse(saved) : [];
   }
 }

@@ -1,24 +1,27 @@
-<nav style="background: #002d72; padding: 10px 15px; display: flex; align-items: center; justify-content: space-between; color: white; border-bottom: 4px solid #ccaa2b; position: sticky; top: 0; z-index: 1000; font-family: serif;">
-  
-  <a routerLink="/" style="text-decoration: none; font-size: 1.5rem;">⭐</a>
-  
-  <div style="display: flex; background: rgba(0,0,0,0.2); padding: 4px; border-radius: 50px;">
-    <a routerLink="/hunt" 
-       routerLinkActive="active-pill"
-       style="text-decoration: none; color: white; padding: 8px 18px; border-radius: 20px; font-weight: bold; font-family: serif; font-size: 0.9rem;">
-      Scavenger Hunt
+<div style="min-height: 100vh; display: flex; flex-direction: column;">
+  <nav style="background: #002d72; padding: 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 10;">
+    
+    <a routerLink="/login">
+      <img src="/images/badge.svg" style="height: 35px; width: auto;" alt="Profile">
     </a>
 
-    <a routerLink="/bingo" 
-       routerLinkActive="active-pill"
-       style="text-decoration: none; color: white; padding: 8px 18px; border-radius: 20px; font-weight: bold; font-family: serif; font-size: 0.9rem;">
-      College Table Bingo
-    </a>
-  </div>
-  
-  <a routerLink="/leaderboard" style="text-decoration: none; font-size: 1.5rem;">🤠</a>
-</nav>
+    <div style="display: flex; gap: 10px; background: rgba(255,255,255,0.15); padding: 5px; border-radius: 30px;">
+      <a routerLink="/hunt" routerLinkActive="pill-active" 
+         style="color: white; text-decoration: none; font-weight: bold; padding: 8px 18px; border-radius: 25px; font-size: 0.9rem;">
+        HUNT
+      </a>
+      <a routerLink="/bingo" routerLinkActive="pill-active" 
+         style="color: white; text-decoration: none; font-weight: bold; padding: 8px 18px; border-radius: 25px; font-size: 0.9rem;">
+        BINGO
+      </a>
+    </div>
 
-<div style="background-color: #f5e6be; min-height: 100vh; padding-top: 20px;">
-  <router-outlet></router-outlet>
+    <a routerLink="/leaderboard">
+      <img src="/images/hat.svg" style="height: 35px; width: auto;" alt="Leaderboard">
+    </a>
+  </nav>
+
+  <main style="flex: 1; padding-bottom: 50px;">
+    <router-outlet></router-outlet>
+  </main>
 </div>

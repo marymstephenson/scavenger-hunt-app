@@ -1,23 +1,87 @@
-<div class="bingo-page-container">
-  <div class="bingo-card">
-    <h1 class="bingo-title">College Table Bingo</h1>
-    <p class="progress-label">Progress: {{ visitedCount() }} / {{ totalNeeded }} Tables</p>
+<div class="bingo-page-container" style="padding: 20px; text-align: center;">
+  <div class="bingo-card" style="background: rgba(185, 217, 235, 0.9); border: 8px solid #002d72; border-radius: 40px; padding: 20px; max-width: 500px; margin: 0 auto; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+    
+    <h1 style="color: #002d72; font-family: serif; text-transform: uppercase;">College Bingo</h1>
 
-    <div class="bingo-grid">
+    <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 20px;">
       @for (square of squares(); track square.id) {
-        <div 
-          class="square"
-          [class.done]="square.id === 12 ? isFreeSpaceUnlocked() : square.completed"
-          [class.free]="square.id === 12"
-          (click)="toggleSquare(square.id)">
+        <div (click)="handleSquareClick(square)"
+             [style.background-color]="isSquareDone(square) ? '#002d72' : 'white'"
+             style="aspect-ratio: 1/1; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 2px solid #002d72; position: relative;">
           
-          <span class="square-text">{{ square.text }}</span>
-          
-          @if ((square.id === 12 && isFreeSpaceUnlocked()) || square.completed) {
-            <div class="star-icon">⭐</div>
+          <img [src]="'/images/' + square.img" 
+               style="width: 80%; height: auto; pointer-events: none;"
+               [style.filter]="isSquareDone(square) ? 'brightness(0) invert(1)' : 'none'">
+
+          @if (isSquareDone(square)) {
+            <span style="position: absolute; top: 2px; right: 2px; color: #e3c478; font-size: 0.8rem;">★</span>
           }
         </div>
       }
     </div>
   </div>
+
+    @if (activeQuestionSquare()) {
+    <div style="position: fixed; inset: 0; background: rgba(0, 45, 114, 0.9); z-index: 10000; display: flex; align-items: center; justify-content: center; padding: 20px;">
+      <div style="background: white; padding: 30px; border-radius: 20px; border: 5px solid #ccaa2b; max-width: 400px; width: 100%; text-align: center; box-shadow: 0 15px 35px rgba(0,0,0,0.4);">
+        
+        <h2 style="color: #002d72; margin-top: 0; font-family: serif; text-transform: uppercase;">
+          {{ activeQuestionSquare()?.college }}
+        </h2>
+        
+        <p style="font-size: 1.1rem; color: #333; margin: 15px 0; font-weight: bold;">
+          {{ activeQuestionSquare()?.question }}
+        </p>
+
+        @if (activeQuestionSquare()?.type === 'trivia') {
+          
+          @if (errorMessage()) {
+            <div style="background: #fff0f0; color: #d9534f; padding: 10px; border-radius: 10px; margin-bottom: 15px; font-size: 0.9rem; border: 1px solid #f5c6cb; animation: shake 0.5s;">
+              {{ errorMessage() }}
+            </div>
+          }
+
+          <input type="text" 
+                [value]="userAnswer()" 
+                (input)="userAnswer.set($any($event.target).value)"
+                (keyup.enter)="checkAnswer()"
+                placeholder="Enter answer here..."
+                style="width: 100%; padding: 12px; margin-bottom: 20px; border: 2px solid #002d72; border-radius: 10px; box-sizing: border-box; font-size: 1rem; outline: none;">
+          
+          <div style="display: flex; gap: 10px;">
+            <button (click)="activeQuestionSquare.set(null)" style="flex: 1; background: #eee; color: #666; border: none; padding: 12px; border-radius: 50px; font-weight: bold; cursor: pointer;">
+              CANCEL
+            </button>
+            <button (click)="checkAnswer()" style="flex: 2; background: #002d72; color: white; border: none; padding: 12px; border-radius: 50px; font-weight: bold; cursor: pointer;">
+              SUBMIT
+            </button>
+          </div>
+
+        } @else {
+          <p style="color: #666; font-style: italic; margin-bottom: 20px;">Find the college rep to scan your code!</p>
+          <button (click)="activeQuestionSquare.set(null)" style="background: #002d72; color: white; border: none; padding: 12px 40px; border-radius: 50px; font-weight: bold; cursor: pointer;">
+            GOT IT
+          </button>
+        }
+      </div>
+    </div>
+  }
+
+  @if (showWinScreen()) {
+      <div style="position: fixed; inset: 0; background: rgba(0, 45, 114, 0.98); z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center;">
+        <h2 style="color: white; font-family: serif; margin-bottom: 5px; text-transform: uppercase;">Bingo!</h2>
+        <p style="color: #b9d9eb; margin-bottom: 5px;">Screenshot to redeem</p>
+        
+        <h1 style="color: #e3c478; font-size: 2.8rem; margin: 10px 0; font-family: serif; text-transform: uppercase;">{{ studentName }}</h1>
+
+        <div style="position: relative; width: 100%; max-width: 380px;">
+          <img src="/images/bingo-cupon.svg" style="width: 100%; height: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+        </div>
+        
+        <button (click)="showWinScreen.set(false)" style="margin-top: 30px; background: #002d72; border: 2px solid #b9d9eb; color: white; padding: 12px 30px; border-radius: 30px; font-weight: bold;">
+          BACK TO BOARD
+        </button>
+      </div>
+    }
+
 </div>

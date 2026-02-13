@@ -1,33 +1,80 @@
 <div style="min-height: calc(100vh - 70px); background: #f4e4bc; padding: 20px; text-align: center; font-family: serif;">
   
-  <div style="background: #b9d9eb; padding: 15px; border-radius: 20px; border: 4px solid #002d72; display: inline-block; margin-bottom: 20px;">
-    <p style="margin: 0; color: #002d72; font-weight: bold; font-size: 1.2rem;">NAME: {{ studentName }}</p>
+  <div style="background: #b9d9eb; padding: 20px; border-radius: 40px; border: 8px solid #002d72; display: inline-block; margin-bottom: 20px; width: 100%; max-width: 450px; box-shadow: 0 10px 25px rgba(0,0,0,0.1);">
+    <p style="margin: 0 0 20px 0; color: #002d72; font-weight: bold; font-size: 1.5rem; text-transform: uppercase;">
+      NAME: {{ studentName }}
+    </p>
 
     <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
-      <div *ngFor="let station of allStations" style="text-align: center;">
-        
-        <div *ngIf="unlockedBadges.includes(station.id); else locked" style="color: #ffcc00; font-size: 3.5rem;">
-          ★
+      @for (station of allStations; track station.id) {
+        <div (click)="openMission(station)" 
+             style="display: flex; flex-direction: column; align-items: center; min-height: 100px; cursor: pointer;">
+          
+          <div style="width: 70px; height: 70px; display: flex; align-items: center; justify-content: center;">
+            <img [src]="'/images/' + station.img" 
+                 [alt]="station.label" 
+                 [style.filter]="unlockedBadges.includes(station.id) ? 'none' : 'grayscale(1) opacity(0.2)'"
+                 style="max-width: 100%; max-height: 100%; transition: all 0.5s ease;">
+          </div>
+
+          <p style="font-size: 0.55rem; color: #002d72; font-weight: bold; text-transform: uppercase; margin-top: 8px; line-height: 1.2;">
+            {{ station.label }}
+          </p>
         </div>
+      }
+    </div>
+  </div>
 
-        <ng-template #locked>
-          <div style="width: 60px; height: 60px; background: rgba(0,0,0,0.05); border: 2px dashed #002d72; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 1.5rem; color: #002d72;">?</div>
-        </ng-template>
+  @if (activeStation) {
+    <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; padding: 20px; z-index: 999;">
+      <div style="background: #b9d9eb; padding: 30px; border-radius: 25px; text-align: center; border: 8px solid #002d72; max-width: 400px; width: 95%;">
+        
+        <h1 style="color: #002d72; margin: 0; text-transform: uppercase; font-size: 1.4rem;">Mission Update</h1>
+        
+        <p style="font-size: 1.1rem; font-weight: bold; color: #002d72; margin: 20px 0; line-height: 1.4;">
+          {{ activeStation.question }}
+        </p>
+        
+        <textarea [(ngModel)]="userAnswer" 
+                  placeholder="Type your answer here..." 
+                  style="width: 100%; height: 80px; padding: 12px; margin-bottom: 20px; border-radius: 12px; border: 3px solid #002d72; box-sizing: border-box; font-family: sans-serif; font-size: 1rem; outline: none; resize: none;">
+        </textarea>
 
-        <p style="font-size: 0.6rem; color: #002d72; font-weight: bold; text-transform: uppercase; margin-top: 5px;">{{ station.label }}</p>
+        <div style="display: flex; gap: 10px;">
+          <button (click)="activeStation = null" 
+                  style="flex: 1; background: #fff; color: #002d72; border: 2px solid #002d72; padding: 15px; border-radius: 40px; font-weight: bold; cursor: pointer;">
+            CANCEL
+          </button>
+          
+          <button (click)="completeTask(activeStation.id)" 
+                  [disabled]="!userAnswer.trim()"
+                  [style.opacity]="userAnswer.trim() ? '1' : '0.4'"
+                  [style.cursor]="userAnswer.trim() ? 'pointer' : 'not-allowed'"
+                  style="flex: 2; background: #002d72; color: white; border: none; padding: 15px; border-radius: 40px; font-weight: bold; text-transform: uppercase; transition: opacity 0.3s ease;">
+            Claim Badge
+          </button>
+        </div>
       </div>
     </div>
-  </div>
+  }
+  @if (showHuntWin()) {
+  <div style="position: fixed; inset: 0; background: rgba(0, 45, 114, 0.98); z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center;">
+    
+    <h2 style="color: white; font-family: serif; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 2px;">Hunt Complete!</h2>
+    <p style="color: #b9d9eb; margin-bottom: 10px; font-weight: bold;">Show this to staff to redeem your prize!</p>
+    
+    <h1 style="color: #e3c478; font-size: 3rem; margin: 10px 0 25px 0; font-family: serif; text-transform: uppercase;">
+      {{ studentName }}
+    </h1>
 
-  <div *ngIf="activeStation" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; padding: 20px; z-index: 999;">
-    <div style="background: #b9d9eb; padding: 30px; border-radius: 25px; text-align: center; border: 8px solid #002d72; max-width: 400px;">
-      <h1 style="color: #002d72; margin-top: 0;">NEW MISSION!</h1>
-      <p style="font-size: 1.3rem; font-weight: bold; color: #333;">{{ activeStation.task }}</p>
-      
-      <button (click)="completeTask(activeStation.id)" 
-              style="background: #002d72; color: white; border: none; padding: 18px 35px; border-radius: 40px; font-size: 1.1rem; font-weight: bold; margin-top: 20px; cursor: pointer;">
-        I COMPLETED THIS!
-      </button>
+    <div style="position: relative; width: 100%; max-width: 380px;">
+      <img src="/images/hunt-cupon.svg" style="width: 100%; height: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
     </div>
+    
+    <button (click)="showHuntWin.set(false)" 
+            style="margin-top: 40px; background: #e3c478; border: none; color: #002d72; padding: 15px 40px; border-radius: 30px; cursor: pointer; font-weight: bold; text-transform: uppercase;">
+      Back to Hunt
+    </button>
   </div>
+}
 </div>

@@ -1,74 +1,55 @@
-.bingo-page-container {
-  display: flex;
-  justify-content: center;
-  padding: 20px;
-  min-height: 80vh;
-}
-
 .bingo-card {
-  background-color: #b3d7ee; // Matching that light blue from your screenshot
-  border: 8px solid #002d72; // Thick blue border matching the hunt card
-  border-radius: 40px;
-  padding: 30px 20px;
-  width: 100%;
-  max-width: 450px;
+  background-color: #b3d7ee; 
+  border: 6px solid #002d72; /* Slightly thinner border for mobile */
+  border-radius: 30px;
+  padding: 20px 10px; /* Less side padding to give the grid more room */
+  width: 95%; /* Ensure it doesn't touch the very edges of the screen */
+  max-width: 400px;
+  margin: 0 auto;
   text-align: center;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-}
-
-.bingo-title {
-  color: #002d72;
-  font-family: serif;
-  text-transform: uppercase;
-  margin-top: 0;
-  font-size: 1.8rem;
-}
-
-.progress-label {
-  color: #002d72;
-  font-weight: bold;
-  margin-bottom: 20px;
+  box-sizing: border-box; /* Critical for padding math! */
 }
 
 .bingo-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 8px;
+  grid-template-columns: repeat(5, 1fr); /* Force exactly 5 columns */
+  gap: 5px; /* Smaller gaps for mobile */
+  width: 100%;
 }
 
 .square {
-  aspect-ratio: 1;
+  aspect-ratio: 1; /* Keeps them perfectly square */
   background: white;
   border: 2px solid #002d72;
-  border-radius: 12px;
+  border-radius: 8px;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  padding: 4px;
-  transition: transform 0.1s;
-
-  &:active { transform: scale(0.95); }
-
-  &.done {
-    background: #ccaa2b; // Gold for completed!
-  }
-
-  &.free {
-    background: #e3f2fd;
-    font-weight: bold;
+  padding: 2px;
+  overflow: hidden; /* Prevents long text from breaking the box */
+  
+  /* These next two make the SVG icons look nice inside the square */
+  img {
+    width: 85%;
+    height: auto;
+    pointer-events: none;
   }
 }
 
 .square-text {
-  font-size: 8px;
+  font-size: 7px; 
   color: #002d72;
   font-weight: bold;
   text-transform: uppercase;
+  line-height: 1.1;
 }
 
-.star-icon {
-  font-size: 14px;
-  margin-top: 2px;
+/* Added this for when a square is marked DONE */
+.square.done {
+  background-color: #002d72 !important;
+  
+  img {
+    filter: brightness(0) invert(1); /* Turns the logo white */
+  }
 }

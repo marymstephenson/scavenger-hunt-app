@@ -1,31 +1,39 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms'; // Required for [(ngModel)]
-import { Router, RouterModule } from '@angular/router'; // Required for navigation
+import { FormsModule } from '@angular/forms';
+import { Router, RouterModule, ActivatedRoute } from '@angular/router'; // Added ActivatedRoute
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  // These must be standalone or NgModules to clear your error
   imports: [CommonModule, FormsModule, RouterModule], 
   templateUrl: './home.html'
 })
 export class HomeComponent {
   private router = inject(Router);
+  private route = inject(ActivatedRoute); // Needed to remember the QR code
 
-  // Data fields matching your Western design
   studentName: string = '';
   troupeNum: string = '';
   favNum: string = '';
 
   login() {
     if (this.studentName && this.troupeNum) {
-      // Save to local storage so the Hunt page knows who is playing
-      localStorage.setItem('studentName', this.studentName);
-      localStorage.setItem('troupeNum', this.troupeNum);
+      // 1. Generate a simple ID for Firebase (e.g., "john-doe-1234")
+      const studentId = `${this.studentName.replace(/\s+/g, '-').toLowerCase()}-${this.troupeNum}`;
       
-      // Navigate to the 9-star grid
-      this.router.navigate(['/hunt']);
+      // 2. Save everything the Hunt & Leaderboard need
+      localStorage.setItem('studentName', this.studentName);
+      localStorage.setItem('studentId', studentId); // Crucial for Firestore sync!
+      localStorage.setItem('troupe', this.troupeNum); // Leaderboard expects 'troupe'
+      
+      // 3. QR REDIRECT LOGIC
+      // Check if the student scanned a QR code before logging in
+      const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/hunt';
+      
+      // 4. Send them to their destination!
+      this.router.navigateByUrl(returnUrl);
+
     } else {
       alert("Hold your horses! We need your name and troupe number first.");
     }
