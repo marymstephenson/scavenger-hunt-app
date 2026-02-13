@@ -1,6 +1,7 @@
 import { Component, signal, computed, effect, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 
 interface BingoSquare {
   id: number;

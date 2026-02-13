@@ -2,12 +2,12 @@
   "name": "scavenger-hunt-app",
   "version": "0.0.0",
   "scripts": {
-    "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
-    "watch": "ng build --watch --configuration development",
-    "test": "ng test"
-  },
+  "ng": "ng",
+  "start": "ng serve",
+  "build": "ng build --configuration production",
+  "test": "ng test",
+  "install-vercel": "npm install --legacy-peer-deps"
+},
   "prettier": {
     "printWidth": 100,
     "singleQuote": true,
